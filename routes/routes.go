@@ -8,5 +8,5 @@ import (
 func initializeRoutes() {
 	// Handle the index route
 	router.GET("/", handlers.ShowIndexPage)
-	router.GET("/message/view/:messageid", getMessage)
+	router.GET("/message/view/:messageid", handlers.GetMessage)
 }
