@@ -1,8 +1,4 @@
-package models
-
-import (
-	"errors"
-)
+package store
 
 //Message is the structure for messages sent by users
 type Message struct {
@@ -17,23 +13,44 @@ var messageList = []Message{
 }
 
 //GetAllMessages return a list of all the messages
-func GetAllMessages() []Message {
-	return messageList
+func GetAllMessages() ([]Message, error) {
+	messageList, err := DBStore.getMessages()
+	if err != nil {
+		return nil, err
+	}
+	return messageList, nil
 }
 
 //GetMessageByID will get message accoording to message id
 func GetMessageByID(id int) (*Message, error) {
-	for _, message := range messageList {
-		if message.ID == id {
-			return &message, nil
-		}
+	message, err := DBStore.getMessageByID(id)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil, errors.New("Cannot find the message")
+	return message, nil
+}
+
+//CreateMessage create a message that a user posted
+func CreateMessage(message *Message) error {
+	err := DBStore.createMessage(message)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//DeleteMessage deletes a message
+func DeleteMessage(id int) error {
+	err := DBStore.deleteMessage(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 //CheckPalindrome check if message that user posted is palidrome or not
-func (m *Message) CheckPalindrome() (b bool) {
+func (m *Message) checkPalindrome() (b bool) {
 	if m.Palindrome == false && m.Content != "" {
 		mid := len(m.Content) / 2
 		last := len(m.Content) - 1

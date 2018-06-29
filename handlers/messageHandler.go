@@ -24,6 +24,7 @@ func GetMessage(c *gin.Context) {
 	//convert parameter value from string to integer
 	if messageId, err := strconv.Atoi(c.Param("messageid")); err == nil {
 		if message, err := models.GetMessageByID(messageId); err == nil {
+			render(c, gin.H{})
 			c.HTML(
 				http.StatusOK,
 				"message.html",

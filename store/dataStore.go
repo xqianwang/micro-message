@@ -6,8 +6,6 @@ import (
 	"os"
 
 	"github.com/jmoiron/sqlx"
-
-	"github.com/micro-message/models"
 )
 
 const (
@@ -22,10 +20,10 @@ const (
 //CreateMessage, GetMessages, DeleteMessage, GetMessageByID
 //this will interact with message API to retrieve data from database
 type Store interface {
-	CreateMessage(message *models.Message) error
-	GetMessages() ([]*models.Message, error)
-	DeleteMessage() (int, error)
-	GetMessageByID() (*models.Message, error)
+	createMessage(message *Message) error
+	getMessages() ([]Message, error)
+	deleteMessage(int) error
+	getMessageByID(int) (*Message, error)
 }
 
 //dataStore maintain db connection
@@ -81,28 +79,39 @@ func dbConfig() map[string]string {
 }
 
 //CreateMessage creates a message in database
-func (s dataStore) CreateMessage(message *models.Message) error {
+func (s dataStore) createMessage(message *Message) error {
 	//here we will trigger func to judge if message is palindrome or not
-	pl := message.CheckPalindrome()
-	createMessage := `INSERT INTO message(id, content, palindrome) VALUES (?, ?, ?)`
-	s.db.MustExec(createMessage, message.ID, message.Content, pl)
+	pl := message.checkPalindrome()
+	createMessage := `INSERT INTO message(content, palindrome) VALUES (?, ?)`
+	s.db.MustExec(createMessage, message.Content, pl)
 	return nil
 }
 
-func (s dataStore) GetMessages() ([]*models.Message, error) {
-	var messages = []*models.Message{}
+func (s dataStore) getMessages() ([]Message, error) {
+	var messages = []Message{}
 	getMessages := `SELECT * FROM message`
-	s.db.Select(&messages, getMessages)
+	_ = s.db.Select(&messages, getMessages)
 	if messages[0].IsEmpty() {
 		return nil, errors.New("No messages")
 	}
 	return messages, nil
 }
 
-func (s dataStore) DeleteMessage() (int, error) {
-	return 0, nil
+func (s dataStore) getMessageByID(id int) (*Message, error) {
+	var message = Message{}
+	getMessage := `SELECT * FROM message WHERE ID=$1`
+	err := s.db.Select(&message, getMessage, id)
+	if err != nil {
+		return nil, err
+	}
+	return &message, nil
 }
 
-func (s dataStore) GetMessageByID() (*models.Message, error) {
-	return nil, nil
+func (s dataStore) deleteMessage(id int) error {
+	deleteMessage := `DELETE FROM message WHERE ID:id`
+	_, err := s.db.NamedQuery(deleteMessage, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
