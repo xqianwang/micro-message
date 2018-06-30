@@ -1,4 +1,4 @@
-<!--index.html-->
+<!--messages.html-->
 
 <!--Embed the header.html template at this location-->
 {{ template "header.html" .}}
@@ -7,9 +7,7 @@
   {{range .payload}}
     <!--Create the link for the article based on its ID-->
   <dl>
-    <a href="/messages/view/{{.ID}}"><dt>{{.ID}}</dt></a>
-    <dd>{{.Content}}</dd>
-    <dd>{{.Palindrome}}</dd>
+    <a href="/messages/view/{{.ID}}"><dt>Message: {{.ID}}</dt></a>
   </dl>
   {{end}}
 

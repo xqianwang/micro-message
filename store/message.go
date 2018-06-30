@@ -7,10 +7,10 @@ type Message struct {
 	Palindrome bool   `db:"palindrome" json:"palindrome"`
 }
 
-var messageList = []Message{
-	Message{ID: 1, Content: "Qlik message center1."},
-	Message{ID: 2, Content: "Qlik message center2."},
-}
+// var messageList = []Message{
+// 	Message{ID: 1, Content: "Qlik message center1."},
+// 	Message{ID: 2, Content: "Qlik message center2."},
+// }
 
 //GetAllMessages return a list of all the messages
 func GetAllMessages() ([]Message, error) {
@@ -32,12 +32,12 @@ func GetMessageByID(id int) (*Message, error) {
 }
 
 //CreateMessage create a message that a user posted
-func CreateMessage(message *Message) error {
-	err := DBStore.createMessage(message)
+func CreateMessage(content string) (int64, error) {
+	id, err := DBStore.createMessage(content)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return id, nil
 }
 
 //DeleteMessage deletes a message

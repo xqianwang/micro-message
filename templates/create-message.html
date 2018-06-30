@@ -1,0 +1,30 @@
+<!--create-message.html-->
+
+<!--Embed the header.html template at this location-->
+{{ template "header.html" .}}
+
+<h1>Create Message</h1>
+
+
+<div class="panel panel-default col-sm-12">
+  <div class="panel-body">
+    <!--If there's an error, display the error-->
+    {{ if .ErrorTitle}}
+    <p class="bg-danger">
+      {{.ErrorTitle}}: {{.ErrorMessage}}
+    </p>
+    {{end}}
+    <!--Create a form that POSTs to the `/article/create` route-->
+    <form class="form" action="/messages/create" method="POST">
+      <div class="form-group">
+        <label for="content">Content</label>
+        <textarea name="content" class="form-control" rows="10" id="content" placeholder="Message Content"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>  
+
+    
+<!--Embed the footer.html template at this location-->
+{{ template "footer.html" .}}
