@@ -1,0 +1,36 @@
+FROM xqianwang/go-base:latest
+LABEL maintainer="xqianwang"
+
+USER root
+
+ENV SOURCE /go/src/github.com/micro-message
+
+RUN yum --setopt=tsflags=nodocs -y install git lsof && \
+    rm -rf /var/cache/yum
+
+RUN go get -u github.com/gin-gonic/gin && \
+    go get -u github.com/lib/pq && \
+    go get -u github.com/jmoiron/sqlx && \
+    mkdir -p $SOURCE
+
+#create application user
+RUN groupadd -g 7758 message && \
+    useradd --no-log-init -u 7758 -g 0 -d /message message && \
+    usermod -aG wheel message
+
+COPY . $SOURCE 
+
+#Build application
+RUN cd $SOURCE && CGO_ENABLED=0 go build -o message && \
+    mv message $GOPAHT/bin
+
+RUN mkdir -p /message/bin /message/bin && \
+    ln -s $GOPATH/bin /message/bin/message
+
+WORKDIR /message/bin
+
+EXPOSE 8080/tcp 
+
+USER 7758
+
+ENTRYPOINT message 

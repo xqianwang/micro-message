@@ -1,7 +1,6 @@
 package store
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -96,10 +95,11 @@ func (s dataStore) createMessage(content string) (int64, error) {
 func (s dataStore) getMessages() ([]Message, error) {
 	var messages = []Message{}
 	getMessages := `SELECT * FROM message`
-	_ = s.db.Select(&messages, getMessages)
-	if messages[0].IsEmpty() {
-		return nil, errors.New("No messages")
-	}
+    err := s.db.Select(&messages, getMessages)
+    fmt.Println(messages)
+	if err != nil {
+		return nil, err
+    }
 	return messages, nil
 }
 
