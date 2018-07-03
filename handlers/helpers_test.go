@@ -3,14 +3,15 @@ package handlers
 import (
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/micro-message/models"
+	"github.com/micro-message/store"
 )
 
-var tmpMessages []models.Message
+var tmpMessages []store.Message
 
 // This function is used for setup before executing the test functions
 func TestMain(m *testing.M) {
@@ -54,3 +55,11 @@ func testHTTPResponse(t *testing.T, r *gin.Engine, req *http.Request, f func(w *
 // func restoreLists() {
 // 	messageList = tmpMessages
 // }
+
+func getRegistrationUser() string {
+	param := url.Values{}
+	param.Add("username", "user1")
+	param.Add("password", "haha")
+	param.Add("email", "user1@qlik.com")
+	return param.Encode()
+}

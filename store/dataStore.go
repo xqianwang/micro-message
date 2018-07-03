@@ -24,6 +24,8 @@ type Store interface {
 	getMessages() ([]Message, error)
 	deleteMessage(int) error
 	getMessageByID(int) (*Message, error)
+	createUser(*User) error
+	getUserByEmail(string) (*User, error)
 }
 
 //dataStore maintain db connection
@@ -80,26 +82,25 @@ func dbConfig() map[string]string {
 
 //CreateMessage creates a message in database
 func (s dataStore) createMessage(content string) (int64, error) {
+	var id int
 	//here we will trigger func to judge if message is palindrome or not
 	message := Message{Content: content}
 	pl := message.checkPalindrome()
-	createMessage := `INSERT INTO message(content, palindrome) VALUES ($1, $2)`
-	result := s.db.MustExec(createMessage, message.Content, pl)
-	id, err := result.LastInsertId()
+	createMessage := `INSERT INTO message(content, palindrome) VALUES ($1, $2) RETURING message.id`
+	err := s.db.QueryRow(createMessage, message.Content, pl).Scan(&id)
 	if err != nil {
-		return 0, nil
+		return 0, err
 	}
-	return id, nil
+	return int64(id), nil
 }
 
 func (s dataStore) getMessages() ([]Message, error) {
 	var messages = []Message{}
 	getMessages := `SELECT * FROM message`
-    err := s.db.Select(&messages, getMessages)
-    fmt.Println(messages)
+	err := s.db.Select(&messages, getMessages)
 	if err != nil {
 		return nil, err
-    }
+	}
 	return messages, nil
 }
 
@@ -126,4 +127,30 @@ func (s dataStore) deleteMessage(id int) error {
 		return err
 	}
 	return nil
+}
+
+func (s dataStore) createUser(user *User) error {
+	var id int
+	createUserQuery := `INSERT INTO users (username, password, email) VALUES ($1, $2, $3) RETURNING users.id`
+	err := s.db.QueryRow(createUserQuery, user.UserName, user.Password, user.Email).Scan(&id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s dataStore) getUserByEmail(email string) (*User, error) {
+	var user = User{}
+	getUserByEmail := `Select * FROM users WHERE email=$1`
+	rows, err := s.db.Queryx(getUserByEmail, email)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		err := rows.StructScan(&user)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return &user, nil
 }

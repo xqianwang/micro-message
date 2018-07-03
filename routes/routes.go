@@ -6,13 +6,26 @@ import (
 
 //InitializeRoutes initialize routes for application
 func initializeRoutes() {
+	//check status
+	router.Use(handlers.SetUserStatus())
 	// Handle the index route
 	router.GET("/", handlers.ShowIndexPage)
-	router.GET("/messages", handlers.GetMessages)
+	//routes for users
+	userRoutes := router.Group("/users")
+	{
+		userRoutes.GET("/register", handlers.EnsureLoggedIn(), handlers.ShowResgistrationPage)
+		userRoutes.POST("/register", handlers.EnsureLoggedIn(), handlers.Register)
+		userRoutes.GET("/login", handlers.ShowLoginPage)
+		userRoutes.POST("/login", handlers.Login)
+		userRoutes.GET("/logout", handlers.EnsureLoggedIn(), handlers.Logout)
+	}
 
-	//
-	router.GET("/messages/view/:messageid", handlers.GetMessage)
-	router.DELETE("/messages/:messageid", handlers.DeleteMessage)
-	router.POST("/messages/create", handlers.CreateMessage)
-	router.GET("/messages/create", handlers.ShowCreatePage)
+	messageRoutes := router.Group("/messages")
+	{
+		messageRoutes.GET("", handlers.EnsureLoggedIn(), handlers.GetMessages)
+		messageRoutes.GET("/view/:messageid", handlers.EnsureLoggedIn(), handlers.GetMessage)
+		messageRoutes.DELETE("/:messageid", handlers.EnsureLoggedIn(), handlers.DeleteMessage)
+		messageRoutes.POST("/create", handlers.EnsureLoggedIn(), handlers.CreateMessage)
+		messageRoutes.GET("/create", handlers.EnsureLoggedIn(), handlers.ShowCreatePage)
+	}
 }
