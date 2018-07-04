@@ -54,23 +54,28 @@ func dbConfig() map[string]string {
 	conf := make(map[string]string)
 	host, ok := os.LookupEnv(dbhost)
 	if !ok {
-		panic("PGHOST environment variable required but not set")
+		fmt.Println("Using defualt postgresql host: localhost")
+		host = "localhost"
 	}
 	port, ok := os.LookupEnv(dbport)
 	if !ok {
-		panic("PGPORT environment variable required but not set")
+		fmt.Println("Using defualt postgresql port: 5432")
+		port = "5432"
 	}
 	user, ok := os.LookupEnv(dbuser)
 	if !ok {
-		panic("PGUSER environment variable required but not set")
+		fmt.Println("Using defualt postgresql user: postgres")
+		user = "postgres"
 	}
 	password, ok := os.LookupEnv(dbpass)
 	if !ok {
-		panic("PGPASS environment variable required but not set")
+		fmt.Println("Using defualt postgresql password: postgres")
+		password = "postgres"
 	}
 	name, ok := os.LookupEnv(dbname)
 	if !ok {
-		panic("DBNAME environment variable required but not set")
+		fmt.Println("Using defualt postgresql db name: postgres")
+		name = "postgres"
 	}
 	conf[dbhost] = host
 	conf[dbport] = port

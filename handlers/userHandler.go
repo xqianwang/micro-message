@@ -27,9 +27,11 @@ func Register(c *gin.Context) {
 			"ErrorTitle":   "Registration Failed",
 			"ErrorMessage": err.Error()})
 	} else {
+		//if user is created successfully we generate cookie token
 		token := generateSessionToken()
 		c.SetCookie("token", token, 3600, "", "", false, true)
 		c.Set("is_logged_in", true)
+
 		render(c, gin.H{
 			"title": "Successful registration & Login"}, "register-successful.html")
 	}
@@ -47,10 +49,11 @@ func Login(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 	email := c.PostForm("email")
+	//check if provided user credentials are valid or not
 	if store.ValidUser(username, password, email) {
 		token := generateSessionToken()
 		c.SetCookie("token", token, 3600, "", "", false, true)
-
+		c.Set("is_logged_in", true)
 		render(c, gin.H{
 			"title": "Successful Login"}, "login-successful.html")
 	} else {
