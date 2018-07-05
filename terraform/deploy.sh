@@ -6,6 +6,7 @@ function error_exit {
     exit $2
 }
 
+#function to run terraform application
 function terraform_run {
     terraform init
     if [ $? -ne 0 ]; then
@@ -20,7 +21,7 @@ function terraform_run {
         error_exit "ERROR: Cannot apply terraform changes." 3
     fi
 }
-
+#first initiate to download terraform dependencies: terraform aws   
 terraform init 2>/dev/null
 
 varPath=$(find ./ -name "00-variables.tf" | grep modules)
