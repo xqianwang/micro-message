@@ -36,7 +36,7 @@ inventoryPath=$(find ./ -name "inventory.cfg")
 #Must have ssh keys 
 eval `ssh-agent -s`
 ssh-add ~/.ssh/id_rsa
-scp $inventoryPath ec2-user@$(terraform output bastion-public_dns):~
+scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $inventoryPath ec2-user@$(terraform output bastion-public_dns):~
 #install openshift
 echo "Installing openshift now"
 cat ./scripts/openshiftInstall.sh | ssh -A ec2-user@$(terraform output bastion-public_dns)

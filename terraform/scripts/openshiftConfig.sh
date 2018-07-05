@@ -101,7 +101,8 @@ cat > ~/openShiftConfig.yml <<EOF
         chdir: ~/postgresql/
       with_items:
       - "oc login -u system:admin -n $NAMESPACE"
-      - "~/postgresql/deploy.sh"    
+      - "~/postgresql/deploy.sh" 
+      - "sleep 180"   
 
 - hosts: ${MASTER_HOST}
   remote_user: $USER
