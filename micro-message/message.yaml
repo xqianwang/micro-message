@@ -132,4 +132,4 @@ parameters:
 - name: MICRO_MESSAGE_IMAGE
   value: xqianwang/micro-message
 - name: MICRO_MESSAGE_IMAGE_VERSION
-  value: latest
+  value: 1.1.1

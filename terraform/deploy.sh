@@ -45,4 +45,7 @@ else
     error_exit "Failed to install openshift" 4
 fi
 
-yum install httpd-tools
+echo "Configuring Openshift deployment now"
+cp ./openshift/openshiftConfig.tf .
+
+terraform plan && terraform apply

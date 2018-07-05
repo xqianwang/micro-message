@@ -25,9 +25,9 @@ RUN cd $SOURCE && CGO_ENABLED=0 go build -o message && \
     mv message $GOPAHT/bin
 
 RUN mkdir -p /message/bin /message/bin/templates && \
-    ln -s $GOPATH/bin /message/bin/message
+    ln -s $GOPATH/bin/message /message/bin/message
 
-COPY ./templates/* /message/bin/templates
+COPY ./templates/* /message/bin/templates/
 
 WORKDIR /message/bin
 
