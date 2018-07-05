@@ -1,0 +1,209 @@
+{
+    "kind": "List",
+    "apiVersion": "v1",
+    "metadata": {},
+    "items": [
+        {
+            "apiVersion": "v1",
+            "kind": "ImageStream",
+            "metadata": {
+                "name": "pgprimary"
+            },
+            "spec": {
+                "dockerImageRepository": "crunchydata/crunchy-postgres",
+                "tags": [
+                    {
+                        "annotations": {
+                            "description": "Provides crunchy-pg",
+                            "iconClass": "icon-database",
+                            "tags": "database",
+                            "version": "centos7-9.6.9-1.8.3"
+                        },
+                        "name": "centos7-9.6.9-1.8.3"
+                    }
+                ]
+            },
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "labels": {
+                    "name": "pgprimary"
+                },
+                "name": "pgprimary"
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "postgres",
+                        "nodePort": 0,
+                        "port": 5432,
+                        "protocol": "TCP",
+                        "targetPort": 5432
+                    }
+                ],
+                "selector": {
+                    "name": "pgprimary"
+                },
+                "sessionAffinity": "None",
+                "type": "ClusterIP"
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "DeploymentConfig",
+            "metadata": {
+                "labels": {
+                    "name": "pgprimary"
+                },
+                "name": "pgprimary"
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "name": "pgprimary"
+                },
+                "strategy": {
+                    "rollingUpdate": {
+                        "maxSurge": 1,
+                        "maxUnavailable": 1
+                    },
+                    "type": "Rolling"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "name": "pgprimary"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "env": [
+                                    {
+                                        "name": "PG_MODE",
+                                        "value": "primary"
+                                    },
+                                    {
+                                        "name": "PG_PRIMARY_PORT",
+                                        "value": "5432"
+                                    },
+                                    {
+                                        "name": "PG_PRIMARY_USER",
+                                        "value": "master"
+                                    },
+                                    {
+                                        "name": "PG_PRIMARY_PASSWORD",
+                                        "value": "master"
+                                    },
+                                    {
+                                        "name": "PG_PASSWORD",
+                                        "value": "qlik"
+                                    },
+                                    {
+                                        "name": "PG_USER",
+                                        "value": "qlik"
+                                    },
+                                    {
+                                        "name": "PG_DATABASE",
+                                        "value": "qlik"
+                                    },
+                                    {
+                                        "name": "PG_ROOT_PASSWORD",
+                                        "value": "postgres"
+                                    },
+                                    {
+                                        "name": "PG_LOCALE",
+                                        "value": "en_US.utf8"
+                                    },
+                                    {
+                                        "name": "DBENV",
+                                        "value": "$DBENV"
+                                    },
+                                    {
+                                        "name": "PGDATA",
+                                        "value": "/pgdata"
+                                    },
+                                    {
+                                        "name": "PGDATA_PATH_OVERRIDE",
+                                        "value": "message"
+                                    }
+                                ],
+                                "image": "crunchydata/crunchy-postgres:centos7-9.6.9-1.8.3",
+                                "name": "pgprimary",
+                                "ports": [
+                                    {
+                                        "containerPort": 5432,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "securityContext": {
+                                    "SupplementalGroups": [
+                                        26
+                                    ],
+                                    "fsGroup": 26,
+                                    "privileged": false,
+                                    "runAsUser": 26
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/pgdata",
+                                        "name": "pgdata",
+                                        "readOnly": false
+                                    },
+                                    {
+                                        "mountPath": "/pgconf",
+                                        "name": "database-conf"
+                                    }
+                                ]
+                            }
+                        ],
+                        "nodeSelector": {
+                            "purpose": "db"
+                        },
+                        "serviceAccount": "qlik",
+                        "serviceAccountName": "qlik",
+                        "volumes": [
+                            {
+                                "hostPath": {
+                                    "path": "/var/postgres"
+                                },
+                                "name": "pgdata"
+                            },
+                            {
+                                "configMap": {
+                                    "items": [
+                                        {
+                                            "key": "setup.sql",
+                                            "path": "setup.sql"
+                                        },
+                                        {
+                                            "key": "postgresql.conf",
+                                            "path": "postgresql.conf"
+                                        },
+                                        {
+                                            "key": "pg_hba.conf",
+                                            "path": "pg_hba.conf"
+                                        }
+                                    ],
+                                    "name": "database-conf"
+                                },
+                                "name": "database-conf"
+                            }
+                        ]
+                    }
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    }
+                ]
+            }
+        }
+    ]
+}

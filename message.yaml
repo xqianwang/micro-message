@@ -1,0 +1,135 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: micro-message
+  creationTimestamp:
+  annotations:
+    openshift.io/display-name: micro-message
+    description: micro-message
+    iconClass: icon-database
+    tags: database,postgresql,micro-message
+message: 'The following service(s) have been created in your project: micro-message'
+labels:
+  template: micro-message
+objects:
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: micro-message
+    creationTimestamp:
+    labels:
+      app: micro-message
+      name: micro-message
+  spec:
+    dockerImageRepository: "${MICRO_MESSAGE_IMAGE}"
+    tags:
+    - name: "${MICRO_MESSAGE_IMAGE_VERSION}"
+      annotations:
+        description: Provides micro-message service
+        iconClass: icon-database
+        tags: application
+        version: "${MICRO_MESSAGE_IMAGE_VERSION}"
+  status:
+    dockerImageRepository: ''
+- kind: Route
+  apiVersion: v1
+  metadata:
+    name: micro-message
+    namespace: ${NAMESPACE}
+  spec:
+    host: "${HOST_NAME}"
+    to:
+      kind: Service
+      name: micro-message
+      weight: 100
+    port:
+      targetPort: message
+    wildcardPolicy: None
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: micro-message
+    creationTimestamp:
+    labels:
+      name: micro-message
+  spec:
+    ports:
+    - name: message
+      protocol: TCP
+      port: 8080
+    selector:
+      name: micro-message
+    clusterIP: None
+    sessionAffinity: None
+  status:
+    loadBalancer: {}
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: micro-message
+    creationTimestamp:
+    labels:
+      name: micro-message
+      app: micro-message
+  spec:
+    strategy:
+      type: Recreate
+      resources: {}
+    triggers:
+    - type: ConfigChange
+    replicas: 1
+    selector:
+      name: micro-message
+    template:
+      metadata:
+        creationTimestamp:
+        labels:
+          name: micro-message
+        annotations: 
+      spec:
+        nodeSelector:
+          purpose: message
+        containers:
+        - name: micro-message
+          image: "${MICRO_MESSAGE_IMAGE}:${MICRO_MESSAGE_IMAGE_VERSION}"
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          env: 
+          - name: PGHOST
+            value: "${PGHOST}"
+          - name: PGPORT
+            value: "${PGPORT}"
+          - name: PGUSER
+            value: "${PGUSER}"
+          - name: PGPASS
+            value: "${PGPASS}"
+          - name: DBNAME
+            value: "${DBNAME}"
+          imagePullPolicy: IfNotPresent
+          securityContext: 
+            runAsUser: '7758'
+            privileged: false
+        restartPolicy: Always
+        dnsPolicy: ClusterFirst
+        serviceAccount: qlik
+  status: {}
+parameters:
+- name: HOST_NAME
+- name: NAMESPACE
+  value: messages
+- name: PGHOST
+  value: pgprimary.messages.svc
+- name: PGPORT
+  value: '5432'
+- name: PGUSER
+  value: qlik
+- name: PGPASS
+  value: qlik
+- name: DBNAME
+  value: qlik
+- name: MICRO_MESSAGE_IMAGE
+  value: xqianwang/micro-message
+- name: MICRO_MESSAGE_IMAGE_VERSION
+  value: latest

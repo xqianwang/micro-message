@@ -1,4 +1,6 @@
 #!/bin/bash
+set -o pipefail
+
 function error_exit {
     echo "$1" 1>&2
     exit $2
@@ -21,9 +23,26 @@ function terraform_run {
 
 terraform init 2>/dev/null
 
-varpath=$(find ./ -name "00-variables.tf" | grep modules)
-invpath=$(find ./ -name "09-inventory.tf" | grep modules)
+varPath=$(find ./ -name "00-variables.tf" | grep modules)
+invPath=$(find ./ -name "09-inventory.tf" | grep modules)
 
-cp ./tmp/00-variables.tf $varpath && cp ./tmp/09-inventory.tf $invpath
+cp ./tmp/00-variables.tf $varPath && cp ./tmp/09-inventory.tf $invPath
 
 terraform_run
+
+inventoryPath=$(find ./ -name "inventory.cfg")
+
+#Must have ssh keys 
+eval `ssh-agent -s`
+ssh-add ~/.ssh/id_rsa
+scp $inventoryPath ec2-user@$(terraform output bastion-public_dns):~
+#install openshift
+echo "Installing openshift now"
+cat ./scripts/openshiftInstall.sh | ssh -A ec2-user@$(terraform output bastion-public_dns)
+if [ $? -eq 0 ]; then
+    echo "Openshift installed successfully."
+else 
+    error_exit "Failed to install openshift" 4
+fi
+
+yum install httpd-tools
