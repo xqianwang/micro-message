@@ -45,21 +45,25 @@ func testHTTPResponse(t *testing.T, r *gin.Engine, req *http.Request, f func(w *
 	}
 }
 
-// This function is used to store the main lists into the temporary one
-// for testing
-// func saveLists() {
-// 	tmpMessages = messageList
-// }
+func getLoginUser() string {
+    params := url.Values{}
+    params.Add("username", "user1")
+    params.Add("password", "pass1")
+    params.Add("email", "user1@qlik.com")
 
-// // This function is used to restore the main lists from the temporary one
-// func restoreLists() {
-// 	messageList = tmpMessages
-// }
+    return params.Encode()
+}
 
 func getRegistrationUser() string {
 	param := url.Values{}
-	param.Add("username", "user1")
+	param.Add("username", "test123")
 	param.Add("password", "haha")
-	param.Add("email", "user1@qlik.com")
+	param.Add("email", "test123@qlik.com")
 	return param.Encode()
+}
+
+func getDeleteMessage() string {
+    param := url.Values{}
+    param.Add("messageid", "1")
+    return param.Encode()
 }

@@ -23,8 +23,38 @@ func TestShowIndexPageUnauthenticated(t *testing.T) {
 		// You can carry out a lot more detailed tests using libraries that can
 		// parse and process HTML pages
 		p, err := ioutil.ReadAll(w.Body)
-		pageOK := err == nil && strings.Index(string(p), "<title>Home Page</title>") > 0
+		pageOK := err == nil && strings.Index(string(p), "<title>Welcome to Micro Message!</title>") > 0
 
 		return statusOK && pageOK
 	})
+}
+
+func TestShowCreatePage(t *testing.T) {
+    r := getRouter(true)
+    r.GET("/messages/create", ShowCreatePage)
+
+    req, _ := http.NewRequest("GET", "/messages/create", nil)
+    testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
+        statusOK := w.Code == http.StatusOK
+
+        p, err := ioutil.ReadAll(w.Body)
+        pageOK := err == nil && strings.Index(string(p), "<title>Create Message</title>") > 0
+        
+        return statusOK && pageOK
+    })
+}
+
+func TestGetMessages(t *testing.T) {
+    r := getRouter(true)
+    r.GET("/messages", GetMessages)
+
+    req, _ := http.NewRequest("GET", "/messages", nil)
+        testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
+        statusOK := w.Code == http.StatusOK
+
+        p, err := ioutil.ReadAll(w.Body)
+        pageOK := err == nil && strings.Index(string(p), "<title>Message List</title>") > 0
+        
+        return statusOK && pageOK
+    })
 }

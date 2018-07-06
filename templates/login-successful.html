@@ -3,9 +3,17 @@
 <!--Embed the header.html template at this location-->
 {{ template "header.html" .}}
 
+<title>{{.title}}</title>
+
 <div>
   You have successfully logged in.
 </div>
+
+<script>
+setTimeout(function() {
+  window.location.href = '/';
+}, 1000)
+</script>
 
 <!--Embed the footer.html template at this location-->
 {{ template "footer.html" .}}

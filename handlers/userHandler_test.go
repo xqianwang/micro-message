@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -46,7 +47,9 @@ func TestNewRegister(t *testing.T) {
 	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
 		OK := w.Code == http.StatusOK
 		p, err := ioutil.ReadAll(w.Body)
-		pageOK := err == nil && strings.Index(string(p), "<title>Successful registration &amp; Login</title>") >= 0
+        pageOK := err == nil && strings.Index(string(p), "<title>Successful registration & Login</title>") >= 0
+        fmt.Println(OK)
+        fmt.Println(pageOK)
 
 		return OK && pageOK
 	})
@@ -69,26 +72,25 @@ func TestShowLoginPageUnauthenticated(t *testing.T) {
 	})
 }
 
-// func TestLoginUnauthenticated(t *testing.T) {
-// 	w := httptest.NewRecorder()
-// 	r := getRouter(true)
+func TestLoginUnauthenticated(t *testing.T) {
+	w := httptest.NewRecorder()
+	r := getRouter(true)
 
-// 	r.POST("/users/login", Login)
+	r.POST("/users/login", Login)
+	loginPayload := getLoginUser()
+	req, _ := http.NewRequest("POST", "/users/login", strings.NewReader(loginPayload))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Content-Length", strconv.Itoa(len(loginPayload)))
 
-// 	// loginPayload := getLoginPOSTPayload()
-// 	req, _ := http.NewRequest("POST", "/users/login", strings.NewReader(loginPayload))
-// 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-// 	req.Header.Add("Content-Length", strconv.Itoa(len(loginPayload)))
+	r.ServeHTTP(w, req)
 
-// 	r.ServeHTTP(w, req)
+	if w.Code != http.StatusOK {
+		t.Fail()
+	}
 
-// 	if w.Code != http.StatusOK {
-// 		t.Fail()
-// 	}
-
-// 	p, err := ioutil.ReadAll(w.Body)
-// 	if err != nil || strings.Index(string(p), "<title>Successful Login</title>") < 0 {
-// 		t.Fail()
-// 	}
-// 	restoreLists()
-// }
+    p, err := ioutil.ReadAll(w.Body)
+    fmt.Println(string(p))
+	if err != nil || strings.Index(string(p), "<title>Successful Login</title>") < 0 {
+		t.Fail()
+	}
+}

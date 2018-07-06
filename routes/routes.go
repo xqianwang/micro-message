@@ -22,9 +22,11 @@ func initializeRoutes() {
 
 	messageRoutes := router.Group("/messages")
 	{
+        messageRoutes.GET("", handlers.EnsureLoggedIn(), handlers.GetMessages)
 		messageRoutes.GET("/view/:messageid", handlers.EnsureLoggedIn(), handlers.GetMessage)
-		messageRoutes.DELETE("/:messageid", handlers.EnsureLoggedIn(), handlers.DeleteMessage)
+        messageRoutes.DELETE("/:messageid", handlers.EnsureLoggedIn(), handlers.DeleteMessage)
 		messageRoutes.POST("/create", handlers.EnsureLoggedIn(), handlers.CreateMessage)
-		messageRoutes.GET("/create", handlers.EnsureLoggedIn(), handlers.ShowCreatePage)
+        messageRoutes.GET("/create", handlers.EnsureLoggedIn(), handlers.ShowCreatePage)
+        messageRoutes.GET("/delete", handlers.EnsureLoggedIn(), handlers.ShowCreatePage)
 	}
 }

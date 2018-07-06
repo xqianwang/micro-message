@@ -90,8 +90,8 @@ func (s dataStore) createMessage(content string) (int64, error) {
 	var id int
 	//here we will trigger func to judge if message is palindrome or not
 	message := Message{Content: content}
-	pl := message.checkPalindrome()
-	createMessage := `INSERT INTO message(content, palindrome) VALUES ($1, $2) RETURING message.id`
+	pl := message.CheckPalindrome()
+	createMessage := `INSERT INTO message(content, palindrome) VALUES ($1, $2) RETURNING message.id`
 	err := s.db.QueryRow(createMessage, message.Content, pl).Scan(&id)
 	if err != nil {
 		return 0, err
@@ -126,8 +126,8 @@ func (s dataStore) getMessageByID(id int) (*Message, error) {
 }
 
 func (s dataStore) deleteMessage(id int) error {
-	deleteMessage := `DELETE FROM message WHERE ID=:id`
-	_, err := s.db.NamedQuery(deleteMessage, id)
+	deleteMessage := `DELETE FROM message WHERE ID=$1`
+	_, err := s.db.Exec(deleteMessage, id)
 	if err != nil {
 		return err
 	}

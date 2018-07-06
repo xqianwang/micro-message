@@ -9,43 +9,62 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
-
+//test palindrome function
 func TestCheckPalindrome(t *testing.T) {
 	var testString = []Message{Message{Content: "qlik"}, Message{Content: "ahha"}}
 	var results = make([]bool, 2)
 
 	for i, str := range testString {
-		results[i] = str.checkPalindrome()
+		results[i] = str.CheckPalindrome()
 	}
 
 	if results[0] != false && results[1] != true {
 		t.Fail()
 	}
 }
-
+//test get all messages function
 func TestGetAllMessages(t *testing.T) {
-	mockData()
-	messages, err := GetAllMessages()
+	MockData()
+    messages, err := GetAllMessages()
+    CleanData()
 	assert.Nil(t, err, "Error should be nil")
 	assert.NotNil(t, messages, "Messages should be returned")
-	cleanData()
 }
-
+//test get one message by id function
 func TestGetMessageByID(t *testing.T) {
-
+    MockData()
+    message, err := GetMessageByID(1)
+    CleanData()
+    assert.Nil(t, err, "Error should be nil")
+    assert.NotNil(t, message, "Message should not be nil")
+}
+//test create message function
+func TestCreateMessage(t *testing.T) {
+    id, err := CreateMessage("test create message")
+    assert.Nil(t, err, "Error should be nil")
+    assert.NotEqual(t, 0, id, "Message id should be larger than 0")
+    
+}
+//test delete message function
+func TestDeleteMessage(t *testing.T) {
+    MockData()
+    err := DeleteMessage(1)
+    CleanData()
+    assert.Nil(t, err, "Error should be nil.")
+    
 }
 
 var ds dataStore
 var schema = `
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username varchar,
     password varchar,
     email varchar
 );
 
-CREATE TABLE message (
-    id SERIAL PRIMARY KEY
+CREATE TABLE IF NOT EXISTS message (
+    id SERIAL PRIMARY KEY,
     content text,
     palindrome boolean
 )`
@@ -63,7 +82,7 @@ func init() {
 	ds = dataStore{db: c}
 }
 
-func mockData() {
+func MockData() {
 	//create tables
 	ds.db.MustExec(schema)
 	insertMessage := `INSERT INTO message (content, palindrome) VALUES ($1, $2)`
@@ -74,9 +93,9 @@ func mockData() {
 	ds.db.MustExec(insertUser, "user2", "pass2", "user2@qlik.com")
 }
 
-func cleanData() {
-	deleteMessage := `TRUNCATE TABLE message CASCADE`
-	deleteUser := `TRUNCATE TABLE users CASCADE`
+func CleanData() {
+	deleteMessage := `TRUNCATE TABLE message RESTART IDENTITY`
+	deleteUser := `TRUNCATE TABLE users RESTART IDENTITY`
 	ds.db.MustExec(deleteMessage)
 	ds.db.MustExec(deleteUser)
 }

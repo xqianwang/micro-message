@@ -13,22 +13,28 @@ import (
 //ShowIndexPage shows index page and message list inside it
 func ShowIndexPage(c *gin.Context) {
 	messages, _ := store.GetAllMessages()
+	isLoggedIn, _ := c.Get("is_logged_in")
 	//fresh index page according to the values
 	render(c, gin.H{
-		"title":   "Welcome to Qlik Message center",
-		"payload": messages}, "index.html")
+		"is_logged_in": isLoggedIn,
+		"title":        "Welcome to Micro Message!",
+		"payload":      messages}, "index.html")
 }
 
 //ShowCreatePage shows create message page
 func ShowCreatePage(c *gin.Context) {
+    isLoggedIn, _ := c.Get("is_logged_in")
 	render(c, gin.H{
+        "is_logged_in": isLoggedIn,
 		"title": "Create Message"}, "create-message.html")
 }
 
 //GetMessages shows list of messages and
 func GetMessages(c *gin.Context) {
+    isLoggedIn, _ := c.Get("is_logged_in")
 	if messages, err := store.GetAllMessages(); err == nil {
 		render(c, gin.H{
+            "is_logged_in": isLoggedIn,
 			"title":   "Message List",
 			"payload": messages}, "messages.html")
 	} else {
@@ -38,10 +44,12 @@ func GetMessages(c *gin.Context) {
 
 //GetMessage get message based on message id
 func GetMessage(c *gin.Context) {
+    isLoggedIn, _ := c.Get("is_logged_in")
 	//convert parameter value from string to integer
 	if messageId, err := strconv.Atoi(c.Param("messageid")); err == nil {
 		if message, err := store.GetMessageByID(messageId); err == nil {
 			render(c, gin.H{
+                "is_logged_in": isLoggedIn,
 				"id":      message.ID,
 				"payload": message}, "message.html")
 		} else {
@@ -55,10 +63,12 @@ func GetMessage(c *gin.Context) {
 
 //CreateMessage ceates a new message
 func CreateMessage(c *gin.Context) {
+    isLoggedIn, _ := c.Get("is_logged_in")
 	// Obtain the POSTed content values
 	content := c.PostForm("content")
 	if id, err := store.CreateMessage(content); err == nil {
 		render(c, gin.H{
+            "is_logged_in": isLoggedIn,
 			"title": "Submission Successful",
 			"id":    id}, "submission.html")
 	} else {
@@ -70,7 +80,8 @@ func CreateMessage(c *gin.Context) {
 func DeleteMessage(c *gin.Context) {
 	if messageId, err := strconv.Atoi(c.Param("messageid")); err == nil {
 		if err := store.DeleteMessage(messageId); err == nil {
-			c.Writer.WriteHeader(http.StatusOK)
+			render(c, gin.H{
+                "title": "Successfully deleted message"}, "delete-successful.html")
 		} else {
 			c.AbortWithError(http.StatusNoContent, fmt.Errorf("Not find corresponding message based in id %d", messageId))
 		}

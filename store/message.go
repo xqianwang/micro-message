@@ -50,7 +50,7 @@ func DeleteMessage(id int) error {
 }
 
 //CheckPalindrome check if message that user posted is palidrome or not
-func (m *Message) checkPalindrome() (b bool) {
+func (m *Message) CheckPalindrome() (b bool) {
 	if m.Palindrome == false && m.Content != "" {
 		mid := len(m.Content) / 2
 		last := len(m.Content) - 1

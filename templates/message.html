@@ -6,11 +6,52 @@
 <!--Display the title of the article-->
 <!--Display the content of the article-->
 <!--Display the Palindrome of the article-->
-<dl>
-    <dt>{{.id}}</dt>
-    <dd>{{.payload.Content}}</dd>
-    <dd>{{.payload.Palindrome}}</dd>
-</dl>
+<div class="container">
+  <div class="card mt-4">
+    <div class="card-body">
+      <div class="d-flex w-100 justify-content-between">
+        <div>
+          {{.id}}
+        </div>
+        <div>
+          {{.payload.Content}}
+        </div>
+        <div>
+          <button type="button" class="btn btn-secondary js-palindrome" click=>
+            <span class="js-palindrome-result">
+              Check Message Palindrome
+            </span>
+          </button>         
+        </div>
+        <div>
+          <button type="button" class="btn btn-secondary js-delete" click=>
+            <span class="js-delete-message">
+              Delete Message
+            </span>
+          </button> 
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$('.js-palindrome').on('click', function () {
+  $(this).text('{{.payload.Palindrome}}')
+})
+</script>
+<script>
+$('.js-delete').on('click', function () {
+    $.ajax({ 
+        url: '/messages/{{.id}}',
+        method: 'DELETE'
+    })
+    .done(function() {
+        console.log('deleted'); 
+        window.location.assign('/messages');
+        })
+})
+</script>
 
 <!--Embed the footer.html template at this location-->
 {{ template "footer.html" .}}
