@@ -35,7 +35,11 @@ terraform output master-public_dns
 ```
 * The openshift management console url is (https://<your master public dns>:8443), username and password are provided by you in userVariables.tf file.
 
-* The application accessing url is (http://<your master public dns>). You can only create, view or delete message after you have register an account or login. 
+* The application accessing url is (http://<your master public dns>). You can only create, view or delete message after you have register an account or login.
+
+![alt text](https://raw.githubusercontent.com/xqianwang/micro-message/master/main.png) 
+![alt text](https://raw.githubusercontent.com/xqianwang/micro-message/master/login.png)
+![alt text](https://raw.githubusercontent.com/xqianwang/micro-message/master/register.png)  
 
 2. Build from the source
 * Download project into your GOPATH by running
