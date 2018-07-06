@@ -37,10 +37,6 @@ terraform output master-public_dns
 
 * The application accessing url is (http://<your master public dns>). You can only create, view or delete message after you have register an account or login.
 
-![alt text](https://raw.githubusercontent.com/xqianwang/micro-message/master/main.png) 
-![alt text](login.png "Login page")
-![alt text](https://raw.githubusercontent.com/xqianwang/micro-message/master/register.png)  
-
 2. Build from the source
 * Download project into your GOPATH by running
 ```
