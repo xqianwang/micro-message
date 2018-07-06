@@ -78,7 +78,7 @@ cat > ~/openShiftConfig.yml <<EOF
   tasks:
     - name: download postgresql db
       get_url:
-        url: https://github.com/xqianwang/micro-message/releases/download/1.1.1/database-1.1.1.tar.gz
+        url: https://github.com/xqianwang/micro-message/releases/download/1.2.1/database-1.2.1.tar.gz
         dest: ~/database.tar.gz
     
     - name: create postgresql directory
@@ -109,7 +109,7 @@ cat > ~/openShiftConfig.yml <<EOF
   tasks:
     - name: download micro-message app openshift files
       get_url:
-        url: https://github.com/xqianwang/micro-message/releases/download/1.1.1/micro-message-1.1.1.tar.gz
+        url: https://github.com/xqianwang/micro-message/releases/download/1.2.1/micro-message-1.2.1.tar.gz
         dest: ~/micro-message.tar.gz
 
     - name: create zrpe directory
