@@ -20,12 +20,13 @@ func initializeRoutes() {
 		userRoutes.GET("/logout", handlers.EnsureLoggedIn(), handlers.Logout)
 	}
 
+    //routes for messages
 	messageRoutes := router.Group("/messages")
 	{
-        messageRoutes.GET("", handlers.EnsureLoggedIn(), handlers.GetMessages)
-		messageRoutes.GET("/view/:messageid", handlers.EnsureLoggedIn(), handlers.GetMessage)
-        messageRoutes.DELETE("/:messageid", handlers.EnsureLoggedIn(), handlers.DeleteMessage)
-		messageRoutes.POST("/create", handlers.EnsureLoggedIn(), handlers.CreateMessage)
+        messageRoutes.GET("", handlers.GetMessages)
+		messageRoutes.GET("/view/:messageid", handlers.GetMessage)
+        messageRoutes.DELETE("/:messageid", handlers.DeleteMessage)
+		messageRoutes.POST("/create", handlers.CreateMessage)
         messageRoutes.GET("/create", handlers.EnsureLoggedIn(), handlers.ShowCreatePage)
         messageRoutes.GET("/delete", handlers.EnsureLoggedIn(), handlers.ShowCreatePage)
 	}

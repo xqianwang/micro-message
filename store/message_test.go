@@ -82,6 +82,7 @@ func init() {
 	ds = dataStore{db: c}
 }
 
+//MockData mocks data for tests
 func MockData() {
 	//create tables
 	ds.db.MustExec(schema)
@@ -93,6 +94,7 @@ func MockData() {
 	ds.db.MustExec(insertUser, "user2", "pass2", "user2@qlik.com")
 }
 
+//CleanData clean data after tests
 func CleanData() {
 	deleteMessage := `TRUNCATE TABLE message RESTART IDENTITY`
 	deleteUser := `TRUNCATE TABLE users RESTART IDENTITY`

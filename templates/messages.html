@@ -3,9 +3,9 @@
 <!--Embed the header.html template at this location-->
 {{ template "header.html" .}}
   <h1>{{.title}}</h1>
-  <!--Loop over the `payload` variable, which is the list of articles-->
+  <!--Loop over the `payload` variable, which is the list of messages-->
   {{range .payload}}
-    <!--Create the link for the article based on its ID-->
+    <!--Create the link for the message based on its ID-->
   <dl>
     <a href="/messages/view/{{.ID}}"><dt>Message: {{.ID}}</dt></a>
   </dl>

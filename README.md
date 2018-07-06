@@ -37,10 +37,6 @@ terraform output master-public_dns
 
 * The application accessing url is (http://<your master public dns>). You can only create, view or delete message after you have register an account or login.
 
-![alt text](https://raw.githubusercontent.com/xqianwang/micro-message/master/main.png) 
-![alt text](https://raw.githubusercontent.com/xqianwang/micro-message/master/login.png)
-![alt text](https://raw.githubusercontent.com/xqianwang/micro-message/master/register.png)  
-
 2. Build from the source
 * Download project into your GOPATH by running
 ```
@@ -58,6 +54,28 @@ Go to project base folder and run command below:
 ```
 go test -v ./...
 ```
+## REST API for messages
+Micro-Message application allows users to interact with application by REST API or UI. 
+In terms of REST API:
+* You can get all messages by running:
+```
+curl -X GET -H "Accept: application/json" http://<public-dns>/messages
+```
+* You can get query 1 message by running:
+```
+curl -X GET -H "Accept: application/json" http://<public-dns>/messages/view/<:messageid>
+```
+* You can delete a message by running:
+```
+curl -X DELETE -H "Accept: application/json" http://<public-dns>/messages/<:messageid>
+```
+* You can create a new message by running: 
+```
+curl -X POST -H "Accept: application/json" http://<public-dns>/messages/create?content=<your-message>
+```
+
+Also you can absolutely interact with application through UI!
+
 
 ## Deployment
 
