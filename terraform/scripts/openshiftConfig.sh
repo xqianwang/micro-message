@@ -1,11 +1,6 @@
 #!/bin/bash
-MASTER_HOST=$1
-NAMESPACE=$2
-OPUSER=$3
-OPUSERPASS=$4
-NODE1_HOST=$5
-NODE2_HOST=$6
-USER=$7
+
+source ~/envs.sh
 
 cat > ~/openShiftConfig.yml <<EOF
 ---
@@ -14,6 +9,8 @@ cat > ~/openShiftConfig.yml <<EOF
   become: yes
   become_method: sudo
   tasks:
+    - name: Install latest passlib with pip
+      pip: name=passlib
     - htpasswd:
         path: /etc/origin/master/htpasswd
         name: $OPUSER
@@ -31,7 +28,6 @@ cat > ~/openShiftConfig.yml <<EOF
     - name: create a new project
       command: "{{item}}"
       with_items:
-      - "oc login -u $OPUSER -p $OPUSERPASS"
       - "oc new-project $NAMESPACE"
       - "oc project $NAMESPACE"
       
@@ -50,9 +46,10 @@ cat > ~/openShiftConfig.yml <<EOF
       - "oc adm policy add-scc-to-user hostaccess system:serviceaccount:$NAMESPACE:qlik"
       - "oc adm policy add-scc-to-user hostmount-anyuid system:serviceaccount:$NAMESPACE:qlik"
       - "oc adm policy add-cluster-role-to-user admin system:serviceaccount:$NAMESPACE:qlik -n $NAMESPACE"
+      - "oc adm policy add-role-to-user admin $OPUSER -n $NAMESPACE"
       - "oc policy add-role-to-group edit system:serviceaccounts -n $NAMESPACE"
-      - "oc label node ${NODE1_HOST} purpose=message"
-      - "oc label node ${NODE2_HOST} purpose=db"
+      - "oc label node ${NODE1_HOST} purpose=message --overwrite "
+      - "oc label node ${NODE2_HOST} purpose=db --overwrite "
 
 - hosts: ${NODE2_HOST}
   remote_user: $USER
@@ -61,12 +58,12 @@ cat > ~/openShiftConfig.yml <<EOF
   tasks:
     - name: create postgresql data directory
       file:
-        path: /var/pgsql
+        path: /var/postgres/
         state: directory
 
     - name: Set postgresql data directory permissions
       file:
-        path: /var/pgsql
+        path: /var/postgres/
         state: directory
         owner: 26
         group: 26
@@ -89,7 +86,7 @@ cat > ~/openShiftConfig.yml <<EOF
         path: ~/postgresql
         state: directory
 
-    - name: untar crunchy db
+    - name: untar postgresql db
       unarchive:
         remote_src: yes
         src: ~/database.tar.gz
@@ -98,10 +95,10 @@ cat > ~/openShiftConfig.yml <<EOF
     - name: deploy database app
       command: "{{item}}"
       args:
-        chdir: ~/postgresql/
+        chdir: ~/postgresql/database/
       with_items:
       - "oc login -u system:admin -n $NAMESPACE"
-      - "~/postgresql/deploy.sh" 
+      - "~/postgresql/database/deploy.sh" 
       - "sleep 180"   
 
 - hosts: ${MASTER_HOST}
@@ -129,7 +126,8 @@ cat > ~/openShiftConfig.yml <<EOF
     - name: deploy micro-message application
       command: "{{item}}"
       args:
-        chdir: ~/micro-message/
+        chdir: ~/micro-message/micro-message
       with_items:
       - "oc login -u system:admin -n $NAMESPACE"
-      - "~/micro-message/deploy.sh"
+      - "~/micro-message/micro-message/deploymm.sh"
+EOF

@@ -1,9 +1,9 @@
 variable aws_access_key {
-  default = ""
+  default = "AKIAI3SRYDW3ECZY4PNQ"
 }
 
 variable aws_secret_key {
-  default = ""
+  default = "fhqtfGQlg83+mj6znCCLbwim9TSk+4sO4cNvww8s"
 }
 
 variable adminUsername {
