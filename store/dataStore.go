@@ -20,7 +20,7 @@ const (
 //CreateMessage, GetMessages, DeleteMessage, GetMessageByID
 //this will interact with message API to retrieve data from database
 type Store interface {
-	createMessage(string) (int64, error)
+	createMessage(string, string) (int64, error)
 	getMessages() ([]Message, error)
 	deleteMessage(int) error
 	getMessageByID(int) (*Message, error)
@@ -86,13 +86,16 @@ func dbConfig() map[string]string {
 }
 
 //CreateMessage creates a message in database
-func (s dataStore) createMessage(content string) (int64, error) {
+func (s dataStore) createMessage(title, content string) (int64, error) {
 	var id int
 	//here we will trigger func to judge if message is palindrome or not
-	message := Message{Content: content}
+	message := Message{
+		Title:   title,
+		Content: content,
+	}
 	pl := message.CheckPalindrome()
-	createMessage := `INSERT INTO message(content, palindrome) VALUES ($1, $2) RETURNING message.id`
-	err := s.db.QueryRow(createMessage, message.Content, pl).Scan(&id)
+	createMessage := `INSERT INTO message(title, content, palindrome) VALUES ($1, $2, $3) RETURNING message.id`
+	err := s.db.QueryRow(createMessage, message.Title, message.Content, pl).Scan(&id)
 	if err != nil {
 		return 0, err
 	}

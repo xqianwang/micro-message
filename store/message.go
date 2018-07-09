@@ -3,6 +3,7 @@ package store
 //Message is the structure for messages sent by users
 type Message struct {
 	ID         int    `db:"id" json:"id"`
+	Title      string `db:"title" json:"title"`
 	Content    string `db:"content" json:"content"`
 	Palindrome bool   `db:"palindrome" json:"palindrome"`
 }
@@ -32,8 +33,8 @@ func GetMessageByID(id int) (*Message, error) {
 }
 
 //CreateMessage create a message that a user posted
-func CreateMessage(content string) (int64, error) {
-	id, err := DBStore.createMessage(content)
+func CreateMessage(title, content string) (int64, error) {
+	id, err := DBStore.createMessage(title, content)
 	if err != nil {
 		return 0, err
 	}

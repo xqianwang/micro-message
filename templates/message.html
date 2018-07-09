@@ -14,6 +14,9 @@
           {{.id}}
         </div>
         <div>
+            {{.payload.Title}}
+        </div>
+        <div>
           {{.payload.Content}}
         </div>
         <div>
@@ -35,11 +38,13 @@
   </div>
 </div>
 
+<!-- performs show palindrome operation -->
 <script>
 $('.js-palindrome').on('click', function () {
   $(this).text('{{.payload.Palindrome}}')
 })
 </script>
+<!--performs delete operation-->
 <script>
 $('.js-delete').on('click', function () {
     $.ajax({ 

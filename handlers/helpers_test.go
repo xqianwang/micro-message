@@ -27,6 +27,7 @@ func getRouter(withTemplates bool) *gin.Engine {
 	r := gin.Default()
 	if withTemplates {
 		r.LoadHTMLGlob("../templates/*")
+		r.Use(SetUserStatus())
 	}
 	return r
 }
@@ -36,7 +37,6 @@ func testHTTPResponse(t *testing.T, r *gin.Engine, req *http.Request, f func(w *
 
 	// Create a response recorder
 	w := httptest.NewRecorder()
-
 	// Create the service and process the above request.
 	r.ServeHTTP(w, req)
 
@@ -46,12 +46,12 @@ func testHTTPResponse(t *testing.T, r *gin.Engine, req *http.Request, f func(w *
 }
 
 func getLoginUser() string {
-    params := url.Values{}
-    params.Add("username", "user1")
-    params.Add("password", "pass1")
-    params.Add("email", "user1@qlik.com")
+	params := url.Values{}
+	params.Add("username", "user1")
+	params.Add("password", "pass1")
+	params.Add("email", "user1@qlik.com")
 
-    return params.Encode()
+	return params.Encode()
 }
 
 func getRegistrationUser() string {
@@ -62,8 +62,24 @@ func getRegistrationUser() string {
 	return param.Encode()
 }
 
+func getNewMessage() string {
+	param := url.Values{}
+	param.Add("title", "test")
+	param.Add("content", "test123")
+
+	return param.Encode()
+}
+
 func getDeleteMessage() string {
-    param := url.Values{}
-    param.Add("messageid", "1")
-    return param.Encode()
+	param := url.Values{}
+	param.Add("messageid", "1")
+	return param.Encode()
+}
+
+func testAuthHandler(t *testing.T, r *gin.Engine, expectedCode int) {
+	req, _ := http.NewRequest("GET", "/", nil)
+
+	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
+		return w.Code == expectedCode
+	})
 }

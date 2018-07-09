@@ -2,6 +2,7 @@
 
 <!--Embed the header.html template at this location-->
 {{ template "header.html" .}}
+<title>{{.title}}</title>
 
 <div>
   <strong>The message was successfully submitted.</strong>
@@ -9,6 +10,12 @@
   <!--Display the linked title of the newly created message-->
   <a href="/messages/view/{{.payload.ID}}">{{.payload.Title}}</a>
 </div>
+
+<script>
+  setTimeout(function() {
+    window.location.href = '/messages';
+  }, 1000)
+</script>
     
 <!--Embed the footer.html template at this location-->
 {{ template "footer.html" .}}

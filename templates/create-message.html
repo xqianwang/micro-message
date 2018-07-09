@@ -17,6 +17,8 @@
     <!--Create a form that POSTs to the `/article/create` route-->
     <form class="form" action="/messages/create" method="POST">
       <div class="form-group">
+        <label for="title">Title</label>
+        <textarea name="title" class="form-control" rows="1" id="title" placeholder="Message title"></textarea>
         <label for="content">Content</label>
         <textarea name="content" class="form-control" rows="10" id="content" placeholder="Message Content"></textarea>
       </div>

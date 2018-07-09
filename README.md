@@ -1,6 +1,6 @@
 # Micri Message
 
-This application is for operating messages based on rest api with simple user authentification, registration and login. It is easy to deploy application on aws with only 2 steps.
+This application is for operating messages based on rest api with simple user authentication, registration and login. It is easy to deploy application on aws with only 2 steps.
 
 ## Getting Started
 
@@ -71,7 +71,7 @@ curl -X DELETE -H "Accept: application/json" http://<public-dns>/messages/<:mess
 ```
 * You can create a new message by running: 
 ```
-curl -X POST -H "Accept: application/json" http://<public-dns>/messages/create?content=<your-message>
+curl -X POST -d "title=8&content=8" -H "Accept: application/json" http://<public-dns>/messages/create
 ```
 
 Also you can absolutely interact with application through UI!

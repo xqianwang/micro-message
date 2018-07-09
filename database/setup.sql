@@ -1,4 +1,4 @@
---create zplatform or zrpe database
+-- create micro-message database
 \echo 'Installing micro-message database!'
 
 alter user postgres password 'PG_ROOT_PASSWORD';
@@ -32,7 +32,8 @@ ALTER ROLE PG_USER SET search_path = PG_USER;
 
 \c PG_DATABASE PG_USER;
 create table message (
-    id  SERIAL PRIMARY KEY, 
+    id  SERIAL PRIMARY KEY,
+    title varchar,
     content text, 
     palindrome boolean
 );
@@ -43,5 +44,4 @@ create table users (
     password varchar, 
     email varchar
 );
-
 

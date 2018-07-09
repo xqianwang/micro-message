@@ -4,12 +4,28 @@
 {{ template "header.html" .}}
   <h1>{{.title}}</h1>
   <!--Loop over the `payload` variable, which is the list of messages-->
-  {{range .payload}}
-    <!--Create the link for the message based on its ID-->
-  <dl>
-    <a href="/messages/view/{{.ID}}"><dt>Message: {{.ID}}</dt></a>
-  </dl>
-  {{end}}
+  {{if .is_logged_in}}
+  <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Title</th>
+          <th scope="col">Content</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!--Loop over the `payload` variable, which is the list of messages in table-->
+        {{range .payload}}
+        <tr>
+          <!--Create the link for the message based on its ID-->
+          <th scope="row"><a href="/messages/view/{{.ID}}">{{.ID}}</a></th>
+          <td><a href="/messages/view/{{.ID}}">{{.Title}}</a></td>
+          <td>{{.Content}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>  
+{{end}}
 
 <!--Embed the footer.html template at this location-->
 {{ template "footer.html" .}}
