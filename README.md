@@ -77,6 +77,17 @@ curl -X POST -d "title=8&content=8" -H "Accept: application/json" http://<public
 Also you can absolutely interact with application through UI!
 
 
+## Application infrastructure
+Micro-Message's infrastructure has a few parts:
+1) Backend database: Postgresql 9.6
+2) REST API: golang
+3) Template handler: golang template
+4) Deployment and aws resource provisioning: terraform
+5) Dockerization: docker
+6) Container management platform: Openshift origin 3.9
+7) UI: Bootstrap
+8) Framework: [golang gin](https://github.com/gin-gonic/gin) [openshift-aws](https://github.com/dwmkerr/terraform-aws-openshift.git)
+
 ## Deployment
 
 You can refer previous steps for deployment.
