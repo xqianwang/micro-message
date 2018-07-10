@@ -1,4 +1,4 @@
-# Micri Message
+# Micro Message
 
 This application is for operating messages based on rest api with simple user authentication, registration and login. It is easy to deploy application on aws with only 2 steps.
 
